@@ -14,7 +14,7 @@ public class VerificationService {
         // 返回结果
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", 1);
-        jsonObject.put("message1", "success");
+        jsonObject.put("message", "success");
 
         return jsonObject.toJSONString();
     }
