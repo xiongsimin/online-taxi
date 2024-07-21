@@ -1,6 +1,7 @@
 package kim.aries.apipassenger.service;
 
 import kim.aries.apipassenger.dto.TokenDto;
+import kim.aries.apipassenger.enums.EnumBizException;
 import kim.aries.apipassenger.remote.ServiceVerificationCodeClient;
 import kim.aries.apipassenger.util.RedisKeyUtil;
 import kim.aries.internalcommon.dto.CommonResponseResultDto;
@@ -40,7 +41,8 @@ public class VerificationService {
         }
         // 校验验证码
         if (!numberCode.equals(verificationCode)) {
-            return CommonResponseResultDto.fail(0, "验证码错误");
+            System.out.println("校验验证码失败");
+            return CommonResponseResultDto.fail(EnumBizException.VERIFICATION_CODE_ERR.getCode(), EnumBizException.VERIFICATION_CODE_ERR.getMessage());
         }
         // 发放token
         UUID uuid = UUID.randomUUID();

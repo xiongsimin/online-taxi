@@ -2,10 +2,8 @@ package kim.aries.apipassenger.controller;
 
 import kim.aries.apipassenger.dto.TokenDto;
 import kim.aries.apipassenger.dto.VerificationCodeDto;
-import kim.aries.apipassenger.remote.ServiceVerificationCodeClient;
 import kim.aries.apipassenger.service.VerificationService;
 import kim.aries.internalcommon.dto.CommonResponseResultDto;
-import kim.aries.internalcommon.dto.verificationcode.NumberCodeDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
