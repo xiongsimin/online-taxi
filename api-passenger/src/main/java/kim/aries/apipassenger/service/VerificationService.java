@@ -2,10 +2,12 @@ package kim.aries.apipassenger.service;
 
 import kim.aries.apipassenger.dto.TokenDto;
 import kim.aries.apipassenger.enums.EnumBizException;
+import kim.aries.apipassenger.remote.ServicePassengerUserClient;
 import kim.aries.apipassenger.remote.ServiceVerificationCodeClient;
 import kim.aries.apipassenger.util.RedisKeyUtil;
 import kim.aries.internalcommon.dto.CommonResponseResultDto;
 import kim.aries.internalcommon.dto.verificationcode.NumberCodeDto;
+import kim.aries.internalcommon.dto.verificationcode.VerificationCodeDto;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class VerificationService {
     @Autowired
     ServiceVerificationCodeClient verificationCodeClient;
+    @Autowired
+    ServicePassengerUserClient passengerUserClient;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
@@ -44,6 +48,12 @@ public class VerificationService {
             System.out.println("校验验证码失败");
             return CommonResponseResultDto.fail(EnumBizException.VERIFICATION_CODE_ERR.getCode(), EnumBizException.VERIFICATION_CODE_ERR.getMessage());
         }
+
+        VerificationCodeDto dto = new VerificationCodeDto();
+        dto.setPassengerPhone(passengerPhone);
+
+        passengerUserClient.loginOrRegister(dto);
+        System.out.println("用户登录/注册成功");
         // 发放token
         UUID uuid = UUID.randomUUID();
 

@@ -1,4 +1,4 @@
-package kim.aries.apipassenger.dto;
+package kim.aries.internalcommon.dto.verificationcode;
 
 public class VerificationCodeDto {
     /**
