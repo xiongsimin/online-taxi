@@ -11,6 +11,11 @@ public class CommonResponseResultDto<T> {
     private String message;
     private T data;
 
+    public static <T> CommonResponseResultDto<T> success() {
+        return new CommonResponseResultDto<T>().setCode(EnumCommonResponseCode.SUCCESS.getCode())
+                .setMessage(EnumCommonResponseCode.SUCCESS.getName()).setData(null);
+    }
+
     public static <T> CommonResponseResultDto<T> success(T data) {
         return new CommonResponseResultDto<T>().setCode(EnumCommonResponseCode.SUCCESS.getCode())
                 .setMessage(EnumCommonResponseCode.SUCCESS.getName()).setData(data);

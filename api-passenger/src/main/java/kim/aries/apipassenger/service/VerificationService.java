@@ -1,21 +1,55 @@
 package kim.aries.apipassenger.service;
 
-import com.alibaba.fastjson.JSONObject;
+import kim.aries.apipassenger.dto.TokenDto;
+import kim.aries.apipassenger.remote.ServiceVerificationCodeClient;
+import kim.aries.apipassenger.util.RedisKeyUtil;
+import kim.aries.internalcommon.dto.CommonResponseResultDto;
+import kim.aries.internalcommon.dto.verificationcode.NumberCodeDto;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class VerificationService {
-    public String generatorCode(String passengerPhone) {
-        System.out.println("调用验证码服务，拿到验证码");
+    @Autowired
+    ServiceVerificationCodeClient verificationCodeClient;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
-        System.out.println("验证码存入redis");
+    public CommonResponseResultDto<Object> generatorCode(String passengerPhone) {
+        CommonResponseResultDto<NumberCodeDto> numberCode = verificationCodeClient.getNumberCode(6);
+        System.out.println("调用生成验证码服务，拿到验证码：" + numberCode.getData().getNumberCode());
+        // 验证码存入redis
+        stringRedisTemplate.opsForValue().set(RedisKeyUtil.getPassengerVerificationCodeKey(passengerPhone), numberCode.getData().getNumberCode() + "", 2, TimeUnit.MINUTES);
 
         System.out.println("异步发送验证码");
-        // 返回结果
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code", 1);
-        jsonObject.put("message", "success");
+        return CommonResponseResultDto.success();
+    }
 
-        return jsonObject.toJSONString();
+    public CommonResponseResultDto<TokenDto> checkCode(String passengerPhone, String verificationCode) {
+        // 从redis缓存中查询验证码
+        String numberCode = stringRedisTemplate.opsForValue().get(RedisKeyUtil.getPassengerVerificationCodeKey(passengerPhone));
+        // 如果已过期，则失败
+        if (StringUtils.isBlank(numberCode)) {
+            System.out.println("redis中不存在验证码");
+            return CommonResponseResultDto.fail(0, "验证码错误");
+        }
+        // 校验验证码
+        if (!numberCode.equals(verificationCode)) {
+            return CommonResponseResultDto.fail(0, "验证码错误");
+        }
+        // 发放token
+        UUID uuid = UUID.randomUUID();
+
+        System.out.println("校验成功，发放token：" + uuid);
+
+        TokenDto tokenDto = new TokenDto();
+        tokenDto.setToken(uuid.toString());
+
+        return CommonResponseResultDto.success(tokenDto);
     }
 }
