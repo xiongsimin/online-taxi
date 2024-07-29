@@ -8,6 +8,8 @@ import kim.aries.apipassenger.util.RedisKeyUtil;
 import kim.aries.internalcommon.dto.CommonResponseResultDto;
 import kim.aries.internalcommon.dto.verificationcode.NumberCodeDto;
 import kim.aries.internalcommon.dto.verificationcode.VerificationCodeDto;
+import kim.aries.internalcommon.enums.EnumUserIdentity;
+import kim.aries.internalcommon.util.JwtUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -55,12 +57,12 @@ public class VerificationService {
         passengerUserClient.loginOrRegister(dto);
         System.out.println("用户登录/注册成功");
         // 发放token
-        UUID uuid = UUID.randomUUID();
+        String token = JwtUtil.generateJwtToken(passengerPhone, EnumUserIdentity.PASSENGER);
 
-        System.out.println("校验成功，发放token：" + uuid);
+        System.out.println("校验成功，发放token：" + token);
 
         TokenDto tokenDto = new TokenDto();
-        tokenDto.setToken(uuid.toString());
+        tokenDto.setToken(token);
 
         return CommonResponseResultDto.success(tokenDto);
     }
