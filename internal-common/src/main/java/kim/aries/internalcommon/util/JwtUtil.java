@@ -51,5 +51,7 @@ public class JwtUtil {
         System.out.println("token = " + token);
 
         System.out.println("解析token = " + parseJwtToken(token));
+
+        System.out.println("aries");
     }
 }
