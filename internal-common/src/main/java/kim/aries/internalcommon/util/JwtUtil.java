@@ -53,5 +53,6 @@ public class JwtUtil {
         System.out.println("解析token = " + parseJwtToken(token));
 
         System.out.println("aries");
+        System.out.println("email");
     }
 }
