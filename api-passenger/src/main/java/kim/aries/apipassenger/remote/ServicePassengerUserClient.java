@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient("service-passenger-user")
 public interface ServicePassengerUserClient {
-
+    /**
+     * 登录/注册获取验证码
+     *
+     * @param dto 入参
+     * @return
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/user")
     CommonResponseResultDto<Object> loginOrRegister(@RequestBody VerificationCodeDto dto);
 }
