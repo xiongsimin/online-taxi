@@ -23,14 +23,9 @@ public class JwtUtil {
         Map<String, String> map = new HashMap<>();
         map.put(JWT_KEY_PHONE, phone);
         map.put(JWT_KEY_IDENTITY, userIdentity.getCode());
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 1);
-        Date time = calendar.getTime();
 
         JWTCreator.Builder builder = JWT.create();
         map.forEach(builder::withClaim);
-
-        builder.withExpiresAt(time);
 
         return builder.sign(Algorithm.HMAC256(SIGN));
     }
@@ -40,8 +35,8 @@ public class JwtUtil {
         Claim phoneClaim = decodedJWT.getClaim(JWT_KEY_PHONE);
         Claim identityClaim = decodedJWT.getClaim(JWT_KEY_IDENTITY);
         TokenResultDto tokenResultDto = new TokenResultDto();
-        tokenResultDto.setPhone(phoneClaim.toString());
-        tokenResultDto.setIdentity(identityClaim.toString());
+        tokenResultDto.setPhone(phoneClaim.asString());
+        tokenResultDto.setIdentity(identityClaim.asString());
 
         return tokenResultDto;
     }

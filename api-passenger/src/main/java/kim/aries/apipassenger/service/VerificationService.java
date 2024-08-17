@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -60,6 +59,9 @@ public class VerificationService {
         String token = JwtUtil.generateJwtToken(passengerPhone, EnumUserIdentity.PASSENGER);
 
         System.out.println("校验成功，发放token：" + token);
+        // token存放到redis中
+        String tokenKey = RedisKeyUtil.getTokenKey(passengerPhone, EnumUserIdentity.PASSENGER.getCode());
+        stringRedisTemplate.opsForValue().set(tokenKey, token);
 
         TokenDto tokenDto = new TokenDto();
         tokenDto.setToken(token);
